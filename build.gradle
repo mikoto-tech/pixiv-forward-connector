@@ -1,10 +1,13 @@
 plugins {
+    id 'org.springframework.boot' version '2.6.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'maven-publish'
 }
 
 group 'net.mikoto.pixiv.forward.connector'
 version '1.0.0'
+sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
@@ -12,13 +15,19 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    implementation 'com.alibaba:fastjson:1.2.80'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    compileOnly 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'com.squareup.okhttp3:okhttp:4.9.3'
+    compileOnly 'com.alibaba:fastjson:1.2.80'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-    implementation 'net.mikoto.pixiv:pixiv-api:1.3.6-spanshot-1'
+    compileOnly 'net.mikoto.pixiv:pixiv-api:1.3.6-spanshot-6'
+    testImplementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    testImplementation 'com.alibaba:fastjson:1.2.80'
+    testImplementation 'net.mikoto.pixiv:pixiv-api:1.3.6-spanshot-6'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-test {
+tasks.named('test') {
     useJUnitPlatform()
 }

@@ -5,7 +5,7 @@ plugins {
     id 'maven-publish'
 }
 
-group 'net.mikoto.pixiv.forward.connector'
+group 'net.mikoto.pixiv'
 version '1.0.0'
 sourceCompatibility = '17'
 
@@ -26,6 +26,32 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testImplementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+publishing {
+    publications {
+        myPublication(MavenPublication) {
+            from components.java
+            pom {
+                name = "pixiv-forward-connector"
+                description = "Mikoto pixiv forward connector"
+                url = "https://www.mikoto.net.cn"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "mikoto"
+                        name = "Zhang keshun"
+                        email = "mikoto@ungine.cn"
+                    }
+                }
+            }
+        }
+    }
 }
 
 tasks.named('test') {

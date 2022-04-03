@@ -6,7 +6,7 @@ import net.mikoto.pixiv.forward.connector.ForwardConnector;
 import net.mikoto.pixiv.forward.connector.exception.GetArtworkInformationException;
 import net.mikoto.pixiv.forward.connector.exception.GetImageException;
 import net.mikoto.pixiv.forward.connector.exception.WrongSignException;
-import net.mikoto.pixiv.forward.connector.impl.ForwardControllerImpl;
+import net.mikoto.pixiv.forward.connector.impl.ForwardConnectorImpl;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -24,7 +24,7 @@ import java.security.spec.InvalidKeySpecException;
 public class ForwardControllerTest {
     @Test
     public void forwardControllerTest() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, NoSuchMethodException, IllegalAccessException, WrongSignException, GetArtworkInformationException, GetImageException {
-        ForwardConnector forwardConnector = new ForwardControllerImpl();
+        ForwardConnector forwardConnector = new ForwardConnectorImpl();
 
         ForwardServer forwardServer = new ForwardServer("server", 1, "key");
 

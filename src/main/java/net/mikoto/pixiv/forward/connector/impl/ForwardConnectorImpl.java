@@ -7,7 +7,6 @@ import net.mikoto.pixiv.api.http.forward.artwork.GetInformation;
 import net.mikoto.pixiv.api.http.forward.web.PublicKey;
 import net.mikoto.pixiv.api.pojo.Artwork;
 import net.mikoto.pixiv.api.pojo.ForwardServer;
-import net.mikoto.pixiv.forward.connector.ForwardConnector;
 import net.mikoto.pixiv.forward.connector.exception.GetArtworkInformationException;
 import net.mikoto.pixiv.forward.connector.exception.GetImageException;
 import net.mikoto.pixiv.forward.connector.exception.WrongSignException;
@@ -34,7 +33,7 @@ import static net.mikoto.pixiv.forward.connector.util.Sha256Util.getSha256;
  * @author mikoto
  * @date 2022/4/3 2:28
  */
-public class ForwardControllerImpl implements ForwardConnector {
+public class ForwardConnectorImpl implements net.mikoto.pixiv.forward.connector.ForwardConnector {
     private static final Set<ForwardServer> FORWARD_SERVER_SET = new HashSet<>();
     private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient.Builder()
             .retryOnConnectionFailure(true)

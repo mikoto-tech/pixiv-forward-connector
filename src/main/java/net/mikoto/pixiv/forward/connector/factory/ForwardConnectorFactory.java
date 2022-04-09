@@ -1,7 +1,7 @@
 package net.mikoto.pixiv.forward.connector.factory;
 
 import net.mikoto.pixiv.forward.connector.ForwardConnector;
-import net.mikoto.pixiv.forward.connector.impl.ForwardConnectorImpl;
+import net.mikoto.pixiv.forward.connector.SimpleForwardConnector;
 
 /**
  * @author mikoto
@@ -20,6 +20,6 @@ public class ForwardConnectorFactory {
      * @return The forward connector object.
      */
     public ForwardConnector create() {
-        return new ForwardConnectorImpl();
+        return new SimpleForwardConnector();
     }
 }

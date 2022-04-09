@@ -22,19 +22,19 @@ import java.security.spec.X509EncodedKeySpec;
 
 public class RsaUtil {
     /**
-     * RSA最大加密明文大小
+     * RSA max encrypt block.
      */
     private static final int MAX_ENCRYPT_BLOCK = 117;
 
     /**
-     * RSA最大解密密文大小
+     * RSA max decrypt block.
      */
     private static final int MAX_DECRYPT_BLOCK = 128;
 
     /**
-     * 获取密钥对
+     * Get the key pair.
      *
-     * @return 密钥对
+     * @return The key pair.
      */
     public static KeyPair getKeyPair() throws NoSuchAlgorithmException {
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
@@ -43,9 +43,9 @@ public class RsaUtil {
     }
 
     /**
-     * 获取私钥
+     * Get the private key.
      *
-     * @param privateKey 私钥字符串
+     * @param privateKey The string of the private key.
      * @return Private key.
      */
     public static PrivateKey getPrivateKey(@NotNull String privateKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -56,9 +56,9 @@ public class RsaUtil {
     }
 
     /**
-     * 获取公钥
+     * Get the public key.
      *
-     * @param publicKey 公钥字符串
+     * @param publicKey The string of the public key.
      * @return Public key.
      */
     public static PublicKey getPublicKey(@NotNull String publicKey) throws InvalidKeySpecException, NoSuchAlgorithmException {
@@ -69,10 +69,10 @@ public class RsaUtil {
     }
 
     /**
-     * RSA加密
+     * RSA encrypt
      *
-     * @param data      待加密数据
-     * @param publicKey 公钥
+     * @param data      The data need to encrypt.
+     * @param publicKey The public key.
      * @return The encrypted data.
      */
     @Contract("_, _ -> new")
@@ -85,7 +85,7 @@ public class RsaUtil {
         int offset = 0;
         byte[] cache;
         int i = 0;
-        // 对数据分段加密
+        // Encrypt data segments
         while (inputLen - offset > 0) {
             if (inputLen - offset > MAX_ENCRYPT_BLOCK) {
                 cache = cipher.doFinal(data.getBytes(), offset, MAX_ENCRYPT_BLOCK);
@@ -98,16 +98,16 @@ public class RsaUtil {
         }
         byte[] encryptedData = out.toByteArray();
         out.close();
-        // 获取加密内容使用base64进行编码,并以UTF-8为标准转化成字符串
-        // 加密后的字符串
+        // The encrypted content is encoded using base64 and converted into a string using UTF-8 as the standard
+        // encrypted string
         return new String(Base64.encodeBase64String(encryptedData));
     }
 
     /**
-     * RSA解密
+     * RSA decrypt
      *
-     * @param data       待解密数据
-     * @param privateKey 私钥
+     * @param data       The data need to decrypt.
+     * @param privateKey The private key.
      * @return Data
      */
     public static String decrypt(String data, PrivateKey privateKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, IOException {
@@ -119,7 +119,7 @@ public class RsaUtil {
         int offset = 0;
         byte[] cache;
         int i = 0;
-        // 对数据分段解密
+        // Decrypt data segments
         while (inputLen - offset > 0) {
             if (inputLen - offset > MAX_DECRYPT_BLOCK) {
                 cache = cipher.doFinal(dataBytes, offset, MAX_DECRYPT_BLOCK);
@@ -131,16 +131,15 @@ public class RsaUtil {
             offset = i * MAX_DECRYPT_BLOCK;
         }
         out.close();
-        // 解密后的内容
         return out.toString(StandardCharsets.UTF_8);
     }
 
     /**
-     * 签名
+     * Sign
      *
-     * @param data       待签名数据
-     * @param privateKey 私钥
-     * @return 签名
+     * @param data       The data need to sign.
+     * @param privateKey The private key.
+     * @return The sign.
      */
     @Contract("_, _ -> new")
     public static @NotNull
@@ -156,21 +155,21 @@ public class RsaUtil {
     }
 
     /**
-     * 验签
+     * Verify the sign.
      *
-     * @param srcData   原始字符串
-     * @param publicKey 公钥
-     * @param sign      签名
-     * @return 是否验签通过
+     * @param rawData   Raw data.
+     * @param publicKey The public key.
+     * @param sign      The sign.
+     * @return Is success.
      */
-    public static boolean verify(@NotNull String srcData, @NotNull PublicKey publicKey, @NotNull String sign) throws NoSuchAlgorithmException, InvalidKeySpecException, SignatureException, InvalidKeyException {
+    public static boolean verify(@NotNull String rawData, @NotNull PublicKey publicKey, @NotNull String sign) throws NoSuchAlgorithmException, InvalidKeySpecException, SignatureException, InvalidKeyException {
         byte[] keyBytes = publicKey.getEncoded();
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         PublicKey key = keyFactory.generatePublic(keySpec);
         Signature signature = Signature.getInstance("MD5withRSA");
         signature.initVerify(key);
-        signature.update(srcData.getBytes());
+        signature.update(rawData.getBytes());
         return signature.verify(Base64.decodeBase64(sign.getBytes()));
     }
 }

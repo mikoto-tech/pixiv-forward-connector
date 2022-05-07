@@ -36,7 +36,7 @@ public class ForwardControllerTest {
         File file = new File("test.jpg");
 
         FileOutputStream fileOutputStream = new FileOutputStream(file);
-        fileOutputStream.write(forwardConnector.getImage(artwork.getIllustUrls().get("original")));
+        fileOutputStream.write(forwardConnector.getImage(artwork.getIllustUrlOriginal()));
         fileOutputStream.close();
     }
 }

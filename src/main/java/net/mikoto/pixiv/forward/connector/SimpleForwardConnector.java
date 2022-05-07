@@ -181,7 +181,7 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
      * @throws IOException           An exception.
      */
     @Override
-    public void addForwardServer(@NotNull ForwardServer forwardServer) throws NoSuchMethodException, IOException {
+    public synchronized void addForwardServer(@NotNull ForwardServer forwardServer) throws NoSuchMethodException, IOException {
         Request publicKeyRequest = new Request.Builder()
                 .url(forwardServer.getAddress() + getHttpApi(PublicKey.class))
                 .get()
@@ -197,7 +197,7 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
      * @return The forward server.
      */
     @Override
-    public ForwardServer getForwardServer() {
+    public synchronized ForwardServer getForwardServer() {
         ForwardServer resultForwardServer = new ForwardServer("You haven't set any forward server", 0);
         int weightSum = 0;
 

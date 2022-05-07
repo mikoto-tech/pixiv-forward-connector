@@ -1,14 +1,16 @@
 package net.mikoto.pixiv.forward.connector;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import net.mikoto.pixiv.api.http.forward.artwork.GetImage;
 import net.mikoto.pixiv.api.http.forward.artwork.GetInformation;
 import net.mikoto.pixiv.api.http.forward.web.PublicKey;
 import net.mikoto.pixiv.api.pojo.Artwork;
 import net.mikoto.pixiv.api.pojo.ForwardServer;
+import net.mikoto.pixiv.api.pojo.Series;
 import net.mikoto.pixiv.forward.connector.exception.GetArtworkInformationException;
 import net.mikoto.pixiv.forward.connector.exception.GetImageException;
+import net.mikoto.pixiv.forward.connector.exception.GetSeriesInformationException;
 import net.mikoto.pixiv.forward.connector.exception.WrongSignException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -63,7 +65,7 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
      */
     @Override
     public Artwork getArtworkInformation(int artworkId) throws NoSuchMethodException, IOException, InvalidKeySpecException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, WrongSignException, GetArtworkInformationException {
-        Artwork artwork = new Artwork();
+        Artwork artwork;
         ForwardServer forwardServer = getForwardServer();
         Request artworkRequest = new Request.Builder()
                 .url(
@@ -82,7 +84,7 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
             if (jsonObject != null) {
                 if (jsonObject.getBoolean(SUCCESS_KEY)) {
                     if (verify(getSha256(jsonObject.getJSONObject(BODY).toJSONString()), getPublicKey(forwardServer.getPublicKey()), jsonObject.getString(SIGN))) {
-                        artwork.loadJson(jsonObject.getJSONObject(BODY));
+                        artwork = JSONObject.parseObject(jsonObject.getJSONObject(BODY).toJSONString(), Artwork.class);
                     } else {
                         throw new WrongSignException(getSha256(jsonObject.getJSONObject(BODY).toJSONString()), forwardServer.getPublicKey(), jsonObject.getString(SIGN));
                     }
@@ -126,6 +128,49 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
         } else {
             throw new GetImageException(String.valueOf(imageResponse.code()));
         }
+    }
+
+    /**
+     * Get the series.
+     *
+     * @param seriesId The id of the series.
+     * @return A series object.
+     */
+    @Override
+    public Series getSeriesInformation(int seriesId) throws NoSuchMethodException, IOException, InvalidKeySpecException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, WrongSignException, GetSeriesInformationException {
+        Series series;
+        ForwardServer forwardServer = getForwardServer();
+        Request seriesRequest = new Request.Builder()
+                .url(
+                        forwardServer.getAddress() +
+                                getHttpApi(
+                                        net.mikoto.pixiv.api.http.forward.series.GetInformation.class,
+                                        forwardServer.getKey(),
+                                        String.valueOf(seriesId)
+                                )
+                )
+                .get()
+                .build();
+        Response seriesResponse = OK_HTTP_CLIENT.newCall(seriesRequest).execute();
+        if (seriesResponse.code() == SUCCESS_CODE) {
+            JSONObject jsonObject = JSON.parseObject(Objects.requireNonNull(seriesResponse.body()).string());
+            if (jsonObject != null) {
+                if (jsonObject.getBoolean(SUCCESS_KEY)) {
+                    if (verify(getSha256(jsonObject.getJSONObject(BODY).toJSONString()), getPublicKey(forwardServer.getPublicKey()), jsonObject.getString(SIGN))) {
+                        series = JSONObject.parseObject(jsonObject.getJSONObject(BODY).toJSONString(), Series.class);
+                    } else {
+                        throw new WrongSignException(getSha256(jsonObject.getJSONObject(BODY).toJSONString()), forwardServer.getPublicKey(), jsonObject.getString(SIGN));
+                    }
+                } else {
+                    throw new GetSeriesInformationException(jsonObject.getString("message"));
+                }
+            } else {
+                throw new GetSeriesInformationException("The json object is null!");
+            }
+        } else {
+            throw new GetSeriesInformationException(String.valueOf(seriesResponse.code()));
+        }
+        return series;
     }
 
     /**

@@ -2,8 +2,10 @@ package net.mikoto.pixiv.forward.connector;
 
 import net.mikoto.pixiv.api.pojo.Artwork;
 import net.mikoto.pixiv.api.pojo.ForwardServer;
+import net.mikoto.pixiv.api.pojo.Series;
 import net.mikoto.pixiv.forward.connector.exception.GetArtworkInformationException;
 import net.mikoto.pixiv.forward.connector.exception.GetImageException;
+import net.mikoto.pixiv.forward.connector.exception.GetSeriesInformationException;
 import net.mikoto.pixiv.forward.connector.exception.WrongSignException;
 
 import java.io.IOException;
@@ -48,6 +50,14 @@ public interface ForwardConnector {
      * @throws GetImageException     An exception.
      */
     byte[] getImage(String url) throws NoSuchMethodException, IOException, GetImageException;
+
+    /**
+     * Get the series.
+     *
+     * @param seriesId The id of the series.
+     * @return A series object.
+     */
+    Series getSeriesInformation(int seriesId) throws NoSuchMethodException, IOException, InvalidKeySpecException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, WrongSignException, GetSeriesInformationException;
 
     /**
      * Add a forward server.

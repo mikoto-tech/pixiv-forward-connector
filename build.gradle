@@ -1,4 +1,6 @@
 plugins {
+    id 'org.springframework.boot' version '2.6.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'maven-publish'
 }
@@ -15,13 +17,15 @@ repositories {
 dependencies {
     compileOnly 'org.apache.tomcat:tomcat-coyote:10.0.20'
     compileOnly 'com.squareup.okhttp3:okhttp:4.9.3'
-    compileOnly 'com.alibaba.fastjson2:fastjson2:2.0.2'
-    compileOnly 'net.mikoto.pixiv:pixiv-api:1.4.0'
+    compileOnly 'com.alibaba.fastjson2:fastjson2:2.0.3'
+    compileOnly 'net.mikoto.pixiv:pixiv-api:1.4.1'
+    compileOnly 'org.springframework.boot:spring-boot-starter-web'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-    testImplementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    testImplementation 'com.alibaba.fastjson2:fastjson2:2.0.2'
-    testImplementation 'net.mikoto.pixiv:pixiv-api:1.4.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-web:2.6.7'
+    testImplementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    testImplementation 'com.alibaba.fastjson2:fastjson2:2.0.3'
+    testImplementation 'net.mikoto.pixiv:pixiv-api:1.4.0'
     testImplementation 'org.apache.tomcat:tomcat-coyote:10.0.20'
 }
 
@@ -38,7 +42,29 @@ publishing {
     }
     publications {
         gpr(MavenPublication) {
-            from(components.java)
+            from components.java
+            pom {
+                name = "pixiv-forward-connector"
+                description = "Mikoto pixiv forward connector"
+                url = "https://mikoto.net.cn"
+                licenses {
+                    license {
+                        name = "GNU Affero General Public License v3.0"
+                        url = "https://www.gnu.org/licenses/agpl-3.0.en.html"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "mikoto"
+                        name = "Zhang keshun"
+                        email = "mikoto@ungine.cn"
+                    }
+                }
+            }
         }
     }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }

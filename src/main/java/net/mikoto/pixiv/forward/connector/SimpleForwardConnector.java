@@ -16,6 +16,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -27,14 +28,15 @@ import java.util.Objects;
 import java.util.Set;
 
 import static net.mikoto.pixiv.api.util.HttpApiUtil.getHttpApi;
-import static net.mikoto.pixiv.forward.connector.util.RsaUtil.getPublicKey;
-import static net.mikoto.pixiv.forward.connector.util.RsaUtil.verify;
-import static net.mikoto.pixiv.forward.connector.util.Sha256Util.getSha256;
+import static net.mikoto.pixiv.api.util.RsaUtil.getPublicKey;
+import static net.mikoto.pixiv.api.util.RsaUtil.verify;
+import static net.mikoto.pixiv.api.util.Sha256Util.getSha256;
 
 /**
  * @author mikoto
  * @date 2022/4/3 2:28
  */
+@Component("forwardConnector")
 public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connector.ForwardConnector {
     private static final Set<ForwardServer> FORWARD_SERVER_SET = new HashSet<>();
     private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient.Builder()
@@ -213,5 +215,10 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
         resultForwardServer.setCurrentWeight(resultForwardServer.getCurrentWeight() - weightSum);
 
         return resultForwardServer;
+    }
+
+    @Override
+    public Artwork getArtworkById(int artworkId) throws Exception {
+        return getArtworkInformation(artworkId);
     }
 }

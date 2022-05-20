@@ -1,5 +1,6 @@
 package net.mikoto.pixiv.forward.connector;
 
+import net.mikoto.pixiv.api.connector.ArtworkDataSource;
 import net.mikoto.pixiv.api.pojo.Artwork;
 import net.mikoto.pixiv.api.pojo.ForwardServer;
 import net.mikoto.pixiv.api.pojo.Series;
@@ -18,7 +19,7 @@ import java.security.spec.InvalidKeySpecException;
  * @author mikoto
  * @date 2022/4/3 2:27
  */
-public interface ForwardConnector {
+public interface ForwardConnector extends ArtworkDataSource {
     /**
      * Get the information of the artwork.
      * It will confirm the artwork's sign.

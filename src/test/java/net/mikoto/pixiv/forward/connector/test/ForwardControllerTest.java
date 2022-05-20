@@ -26,7 +26,7 @@ public class ForwardControllerTest {
     public void forwardControllerTest() throws IOException, InvalidKeySpecException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, NoSuchMethodException, IllegalAccessException, WrongSignException, GetArtworkInformationException, GetImageException {
         ForwardConnector forwardConnector = new SimpleForwardConnector();
 
-        ForwardServer forwardServer = new ForwardServer("server", 1, "key");
+        ForwardServer forwardServer = new ForwardServer("https://mikoto-pixiv-forward-1.mikoto-pixiv.cc", 1, "MikotoTestKeyForMikotoPixivForward");
 
         forwardConnector.addForwardServer(forwardServer);
 

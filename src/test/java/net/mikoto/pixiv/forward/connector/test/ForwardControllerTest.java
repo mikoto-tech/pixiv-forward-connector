@@ -1,7 +1,7 @@
 package net.mikoto.pixiv.forward.connector.test;
 
-import net.mikoto.pixiv.api.pojo.Artwork;
-import net.mikoto.pixiv.api.pojo.ForwardServer;
+import net.mikoto.pixiv.api.model.Artwork;
+import net.mikoto.pixiv.api.model.ForwardServer;
 import net.mikoto.pixiv.forward.connector.ForwardConnector;
 import net.mikoto.pixiv.forward.connector.SimpleForwardConnector;
 import net.mikoto.pixiv.forward.connector.exception.GetArtworkInformationException;

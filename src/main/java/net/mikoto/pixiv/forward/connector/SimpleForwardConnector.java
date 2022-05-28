@@ -53,7 +53,7 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
      * Get the information of the artwork.
      * It will confirm the artwork's sign.
      * You should use the pixiv-forward version v1.2.4 or newer.
-     * Get the release at: https://github.com/mikoto2464/pixiv-forward/releases/tag/v1.2.4
+     * Get the release at: <a href="https://github.com/mikoto2464/pixiv-forward/releases/tag/v1.2.4">Pixiv-Forward</a>
      *
      * @param artworkId The id of this artwork.
      * @return The artwork.
@@ -66,7 +66,7 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
      * @throws WrongSignException             An exception.
      */
     @Override
-    public Artwork getArtworkInformation(int artworkId) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, WrongSignException, GetArtworkInformationException {
+    public Artwork getArtworkById(int artworkId) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, WrongSignException, GetArtworkInformationException {
         Artwork artwork;
         ForwardServer forwardServer = getForwardServer();
         Request artworkRequest = new Request.Builder()
@@ -217,10 +217,5 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
         resultForwardServer.setCurrentWeight(resultForwardServer.getCurrentWeight() - weightSum);
 
         return resultForwardServer;
-    }
-
-    @Override
-    public Artwork getArtworkById(int artworkId) throws Exception {
-        return getArtworkInformation(artworkId);
     }
 }

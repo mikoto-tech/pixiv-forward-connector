@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'net.mikoto.pixiv'
-version '1.1.1'
+version '1.1.2-snapshot-2'
 sourceCompatibility = '17'
 
 repositories {
@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'net.mikoto.pixiv:pixiv-api:1.4.2-snapshot-3'
+    compileOnly 'net.mikoto.pixiv:pixiv-api:1.4.2-snapshot-4'
     compileOnly 'com.squareup.okhttp3:okhttp:4.9.3'
     compileOnly 'com.alibaba.fastjson2:fastjson2:2.0.3'
     compileOnly 'org.apache.tomcat:tomcat-coyote:10.0.20'

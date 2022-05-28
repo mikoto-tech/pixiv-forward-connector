@@ -24,7 +24,7 @@ public interface ForwardConnector extends ArtworkDataSource {
      * Get the information of the artwork.
      * It will confirm the artwork's sign.
      * You should use the pixiv-forward version v1.2.5 or newer.
-     * Get the release at: https://github.com/mikoto2464/pixiv-forward/releases/tag/v1.2.5
+     * Get the release at: <a href="https://github.com/mikoto2464/pixiv-forward/releases">pixiv-forward</a>
      *
      * @param artworkId The id of this artwork.
      * @return The artwork.

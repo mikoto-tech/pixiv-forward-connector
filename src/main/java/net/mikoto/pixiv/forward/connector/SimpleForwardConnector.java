@@ -4,14 +4,12 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import net.mikoto.pixiv.api.http.forward.artwork.GetImage;
 import net.mikoto.pixiv.api.http.forward.artwork.GetInformation;
-import net.mikoto.pixiv.api.http.forward.web.PublicKey;
 import net.mikoto.pixiv.api.model.Artwork;
 import net.mikoto.pixiv.api.model.ForwardServer;
 import net.mikoto.pixiv.api.model.Series;
 import net.mikoto.pixiv.forward.connector.exception.GetArtworkInformationException;
 import net.mikoto.pixiv.forward.connector.exception.GetImageException;
 import net.mikoto.pixiv.forward.connector.exception.GetSeriesInformationException;
-import net.mikoto.pixiv.forward.connector.exception.WrongSignException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -19,10 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -30,9 +24,6 @@ import java.util.Set;
 import static net.mikoto.pixiv.api.http.forward.artwork.GetInformation.PARAM_ARTWORK_ID;
 import static net.mikoto.pixiv.api.http.forward.artwork.GetInformation.PARAM_KEY;
 import static net.mikoto.pixiv.api.util.HttpApiUtil.getHttpApi;
-import static net.mikoto.pixiv.api.util.RsaUtil.getPublicKey;
-import static net.mikoto.pixiv.api.util.RsaUtil.verify;
-import static net.mikoto.pixiv.api.util.Sha256Util.getSha256;
 
 /**
  * @author mikoto
@@ -40,33 +31,30 @@ import static net.mikoto.pixiv.api.util.Sha256Util.getSha256;
  */
 @Component("forwardConnector")
 public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connector.ForwardConnector {
+    /**
+     * Constants
+     */
     private static final Set<ForwardServer> FORWARD_SERVER_SET = new HashSet<>();
     private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
             .build();
     private static final String SUCCESS_KEY = "success";
-    private static final int SUCCESS_CODE = 200;
-    private static final String SIGN = "sign";
     private static final String BODY = "body";
+    private static final int SUCCESS_CODE = 200;
 
     /**
      * Get the information of the artwork.
-     * It will confirm the artwork's sign.
-     * You should use the pixiv-forward version v1.2.4 or newer.
-     * Get the release at: <a href="https://github.com/mikoto2464/pixiv-forward/releases/tag/v1.2.4">Pixiv-Forward</a>
+     * It will <b>not<b/> confirm the artwork's sign.
+     * You should use the pixiv-forward version v1.3.2 or newer.
+     * Get the release at: <a href="https://github.com/mikoto-tech/pixiv-forward/releases/tag/v1.3.2">Pixiv-Forward v1.3.2</a>
      *
      * @param artworkId The id of this artwork.
      * @return The artwork.
      * @throws IOException                    An exception.
-     * @throws InvalidKeySpecException        An exception.
-     * @throws SignatureException             An exception.
-     * @throws InvalidKeyException            An exception.
-     * @throws NoSuchAlgorithmException       An exception.
      * @throws GetArtworkInformationException An exception.
-     * @throws WrongSignException             An exception.
      */
     @Override
-    public Artwork getArtworkById(int artworkId) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, WrongSignException, GetArtworkInformationException {
+    public Artwork getArtworkById(int artworkId) throws IOException, GetArtworkInformationException {
         Artwork artwork;
         ForwardServer forwardServer = getForwardServer();
         Request artworkRequest = new Request.Builder()
@@ -85,11 +73,7 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
             artworkResponse.close();
             if (jsonObject != null) {
                 if (jsonObject.getBoolean(SUCCESS_KEY)) {
-                    if (verify(getSha256(jsonObject.getJSONObject(BODY).toJSONString()), getPublicKey(forwardServer.getPublicKey()), jsonObject.getString(SIGN))) {
-                        artwork = jsonObject.getObject(BODY, Artwork.class);
-                    } else {
-                        throw new WrongSignException(getSha256(jsonObject.getJSONObject(BODY).toJSONString()), forwardServer.getPublicKey(), jsonObject.getString(SIGN));
-                    }
+                    artwork = jsonObject.getObject(BODY, Artwork.class);
                 } else {
                     throw new GetArtworkInformationException(jsonObject.getString("message"));
                 }
@@ -111,7 +95,7 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
      * @throws GetImageException An exception.
      */
     @Override
-    public byte[] getImage(String url) throws IOException, GetImageException {
+    public byte[] getImage(String url) throws GetImageException, IOException {
         ForwardServer forwardServer = getForwardServer();
         Request imageRequest = new Request.Builder()
                 .url(forwardServer.getAddress() + getHttpApi(GetImage.class, forwardServer.getKey(), url))
@@ -122,7 +106,7 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
             byte[] bytes;
             try {
                 bytes = Objects.requireNonNull(imageResponse.body()).bytes();
-            } catch (NullPointerException e) {
+            } catch (NullPointerException | IOException e) {
                 throw new GetImageException(e.getMessage());
             } finally {
                 imageResponse.close();
@@ -140,7 +124,7 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
      * @return A series object.
      */
     @Override
-    public Series getSeriesInformation(int seriesId) throws IOException, InvalidKeySpecException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, WrongSignException, GetSeriesInformationException {
+    public Series getSeriesInformation(int seriesId) throws IOException, GetSeriesInformationException {
         Series series;
         ForwardServer forwardServer = getForwardServer();
         Request seriesRequest = new Request.Builder()
@@ -160,11 +144,7 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
             seriesResponse.close();
             if (jsonObject != null) {
                 if (jsonObject.getBoolean(SUCCESS_KEY)) {
-                    if (verify(getSha256(jsonObject.getJSONObject(BODY).toJSONString()), getPublicKey(forwardServer.getPublicKey()), jsonObject.getString(SIGN))) {
-                        series = JSONObject.parseObject(jsonObject.getJSONObject(BODY).toJSONString(), Series.class);
-                    } else {
-                        throw new WrongSignException(getSha256(jsonObject.getJSONObject(BODY).toJSONString()), forwardServer.getPublicKey(), jsonObject.getString(SIGN));
-                    }
+                    series = JSONObject.parseObject(jsonObject.getJSONObject(BODY).toJSONString(), Series.class);
                 } else {
                     throw new GetSeriesInformationException(jsonObject.getString("message"));
                 }
@@ -181,17 +161,9 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
      * Add a forward server.
      *
      * @param forwardServer The forward server address.
-     * @throws IOException           An exception.
      */
     @Override
-    public synchronized void addForwardServer(@NotNull ForwardServer forwardServer) throws IOException {
-        Request publicKeyRequest = new Request.Builder()
-                .url(forwardServer.getAddress() + getHttpApi(PublicKey.class))
-                .get()
-                .build();
-        Response publicKeyResponse = OK_HTTP_CLIENT.newCall(publicKeyRequest).execute();
-        forwardServer.setPublicKey(Objects.requireNonNull(publicKeyResponse.body()).string());
-        publicKeyResponse.close();
+    public synchronized void addForwardServer(@NotNull ForwardServer forwardServer) {
         FORWARD_SERVER_SET.add(forwardServer);
     }
 

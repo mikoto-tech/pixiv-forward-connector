@@ -15,14 +15,14 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'net.mikoto.pixiv:pixiv-api:1.4.2-snapshot-4'
+    compileOnly 'net.mikoto.pixiv:pixiv-api:1.4.2'
     compileOnly 'com.squareup.okhttp3:okhttp:4.9.3'
-    compileOnly 'com.alibaba.fastjson2:fastjson2:2.0.3'
+    compileOnly 'com.alibaba.fastjson2:fastjson2:2.0.5'
     compileOnly 'org.apache.tomcat:tomcat-coyote:10.0.20'
     compileOnly 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation 'net.mikoto.pixiv:pixiv-api:1.4.2-snapshot-3'
+    testImplementation 'net.mikoto.pixiv:pixiv-api:1.4.2'
     testImplementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    testImplementation 'com.alibaba.fastjson2:fastjson2:2.0.3'
+    testImplementation 'com.alibaba.fastjson2:fastjson2:2.0.5'
     testImplementation 'org.apache.tomcat:tomcat-coyote:10.0.20'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'

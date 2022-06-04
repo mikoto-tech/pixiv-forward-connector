@@ -6,13 +6,8 @@ import net.mikoto.pixiv.api.model.ForwardServer;
 import net.mikoto.pixiv.api.model.Series;
 import net.mikoto.pixiv.forward.connector.exception.GetImageException;
 import net.mikoto.pixiv.forward.connector.exception.GetSeriesInformationException;
-import net.mikoto.pixiv.forward.connector.exception.WrongSignException;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import java.security.spec.InvalidKeySpecException;
 
 /**
  * @author mikoto
@@ -24,28 +19,27 @@ public interface ForwardConnector extends ArtworkDataSource, Connector {
      *
      * @param url The url of this image.
      * @return The image data.
-     * @throws NoSuchMethodException An exception.
-     * @throws IOException           An exception.
-     * @throws GetImageException     An exception.
+     * @throws IOException       An exception.
+     * @throws GetImageException An exception.
      */
-    byte[] getImage(String url) throws NoSuchMethodException, IOException, GetImageException;
+    byte[] getImage(String url) throws GetImageException, IOException;
 
     /**
      * Get the series.
      *
      * @param seriesId The id of the series.
      * @return A series object.
+     * @throws IOException           An exception.
+     * @throws GetSeriesInformationException           An exception.
      */
-    Series getSeriesInformation(int seriesId) throws NoSuchMethodException, IOException, InvalidKeySpecException, NoSuchAlgorithmException, SignatureException, InvalidKeyException, WrongSignException, GetSeriesInformationException;
+    Series getSeriesInformation(int seriesId) throws IOException, GetSeriesInformationException;
 
     /**
      * Add a forward server.
      *
      * @param forwardServer The forward server address.
-     * @throws NoSuchMethodException An exception.
-     * @throws IOException           An exception.
      */
-    void addForwardServer(ForwardServer forwardServer) throws NoSuchMethodException, IOException;
+    void addForwardServer(ForwardServer forwardServer);
 
     /**
      * Get the forward server.

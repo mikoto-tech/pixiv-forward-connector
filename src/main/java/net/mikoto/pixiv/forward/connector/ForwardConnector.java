@@ -2,8 +2,10 @@ package net.mikoto.pixiv.forward.connector;
 
 import net.mikoto.pixiv.api.connector.ArtworkDataSource;
 import net.mikoto.pixiv.api.connector.Connector;
+import net.mikoto.pixiv.api.model.Artwork;
 import net.mikoto.pixiv.api.model.ForwardServer;
 import net.mikoto.pixiv.api.model.Series;
+import net.mikoto.pixiv.forward.connector.exception.GetArtworkInformationException;
 import net.mikoto.pixiv.forward.connector.exception.GetImageException;
 import net.mikoto.pixiv.forward.connector.exception.GetSeriesInformationException;
 
@@ -29,10 +31,20 @@ public interface ForwardConnector extends ArtworkDataSource, Connector {
      *
      * @param seriesId The id of the series.
      * @return A series object.
-     * @throws IOException           An exception.
-     * @throws GetSeriesInformationException           An exception.
+     * @throws IOException                   An exception.
+     * @throws GetSeriesInformationException An exception.
      */
     Series getSeriesInformation(int seriesId) throws IOException, GetSeriesInformationException;
+
+    /**
+     * Get the artwork.
+     *
+     * @param artworkId The id of the series.
+     * @return A series object.
+     * @throws IOException                    An exception.
+     * @throws GetArtworkInformationException An exception.
+     */
+    Artwork getArtworkInformation(int artworkId) throws IOException, GetArtworkInformationException;
 
     /**
      * Add a forward server.

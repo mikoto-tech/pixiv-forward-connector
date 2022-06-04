@@ -10,6 +10,7 @@ import net.mikoto.pixiv.api.model.Series;
 import net.mikoto.pixiv.forward.connector.exception.GetArtworkInformationException;
 import net.mikoto.pixiv.forward.connector.exception.GetImageException;
 import net.mikoto.pixiv.forward.connector.exception.GetSeriesInformationException;
+import net.mikoto.pixiv.forward.connector.exception.NoSuchArtworkException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -54,7 +55,7 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
      * @throws GetArtworkInformationException An exception.
      */
     @Override
-    public Artwork getArtworkById(int artworkId) throws IOException, GetArtworkInformationException {
+    public Artwork getArtworkInformation(int artworkId) throws IOException, GetArtworkInformationException {
         Artwork artwork;
         ForwardServer forwardServer = getForwardServer();
         Request artworkRequest = new Request.Builder()
@@ -75,7 +76,7 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
                 if (jsonObject.getBoolean(SUCCESS_KEY)) {
                     artwork = jsonObject.getObject(BODY, Artwork.class);
                 } else {
-                    throw new GetArtworkInformationException(jsonObject.getString("message"));
+                    throw new NoSuchArtworkException(String.valueOf(artworkId));
                 }
             } else {
                 throw new GetArtworkInformationException("The json object is null!");
@@ -189,5 +190,10 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
         resultForwardServer.setCurrentWeight(resultForwardServer.getCurrentWeight() - weightSum);
 
         return resultForwardServer;
+    }
+
+    @Override
+    public Artwork getArtworkById(int artworkId) throws Exception {
+        return getArtworkInformation(artworkId);
     }
 }

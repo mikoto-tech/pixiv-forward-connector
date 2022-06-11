@@ -7,10 +7,7 @@ import net.mikoto.pixiv.api.http.forward.artwork.GetInformation;
 import net.mikoto.pixiv.api.model.Artwork;
 import net.mikoto.pixiv.api.model.ForwardServer;
 import net.mikoto.pixiv.api.model.Series;
-import net.mikoto.pixiv.forward.connector.exception.GetArtworkInformationException;
-import net.mikoto.pixiv.forward.connector.exception.GetImageException;
-import net.mikoto.pixiv.forward.connector.exception.GetSeriesInformationException;
-import net.mikoto.pixiv.forward.connector.exception.NoSuchArtworkException;
+import net.mikoto.pixiv.forward.connector.exception.*;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -175,7 +172,10 @@ public class SimpleForwardConnector implements net.mikoto.pixiv.forward.connecto
      */
     @Override
     public synchronized ForwardServer getForwardServer() {
-        ForwardServer resultForwardServer = new ForwardServer("You haven't set any forward server", 0);
+        if (FORWARD_SERVER_SET.isEmpty()) {
+            throw new NoForwardServerException("You haven't set any forward server");
+        }
+        ForwardServer resultForwardServer = FORWARD_SERVER_SET.iterator().next();
         int weightSum = 0;
 
         for (ForwardServer forwardServer :

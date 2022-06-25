@@ -1,10 +1,7 @@
-package net.mikoto.pixiv.forward.connector.forward;
+package net.mikoto.pixiv.forward.connector;
 
 import net.mikoto.pixiv.api.model.Artwork;
 import net.mikoto.pixiv.api.model.ForwardServer;
-import net.mikoto.pixiv.forward.connector.exception.GetArtworkInformationException;
-
-import java.io.IOException;
 
 /**
  * @author mikoto
@@ -15,11 +12,9 @@ public interface ForwardConnector {
      * Get the artwork.
      *
      * @param artworkId The id of the series.
-     * @return A series object.
-     * @throws IOException                    An exception.
-     * @throws GetArtworkInformationException An exception.
+     * @return An artwork object.
      */
-    Artwork getArtworkInformation(int artworkId) throws Exception;
+    Artwork getArtworkInformation(int artworkId);
 
     /**
      * Add a forward server.
